@@ -1,60 +1,87 @@
 import java.util.Scanner;
 
 public class LoginSystem {
-    public static void main(String[] args) {
+    // ANSI color codes for styling
+    private static final String RESET = "\u001B[0m";
+    private static final String RED = "\u001B[31m";
+    private static final String GREEN = "\u001B[32m";
+    private static final String CYAN = "\u001B[36m";
+
+    public static void main(String[] args) throws InterruptedException {
         Scanner scanner = new Scanner(System.in);
-        
-        // Creating a sample user (Username: admin, Password: 1234, isAdmin: true)
+
+        // Sample user (Username: admin, Password: 1234, isAdmin: true)
         Login user = new Login("admin", "1234", true);
 
         while (true) {
-            System.out.println("\n===== Login System =====");
+            printHeader(" LOGIN SYSTEM ");
             System.out.println("1. Login");
             System.out.println("2. Logout");
             System.out.println("3. Check Login Status");
             System.out.println("4. Check Admin Status");
             System.out.println("5. Exit");
-            System.out.print("Choose an option: ");
-            
+            System.out.print(CYAN + "Choose an option: " + RESET);
+
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline
+            scanner.nextLine(); // Consume newline
 
             switch (choice) {
                 case 1:
-                    System.out.print("Enter username: ");
+                    System.out.print("\n🔑 Enter username: ");
                     String username = scanner.nextLine();
-                    System.out.print("Enter password: ");
+                    System.out.print("🔒 Enter password: ");
                     String password = scanner.nextLine();
 
+                    System.out.print("🔄 Logging in");
+                    loadingEffect();
+
                     if (user.login(username, password)) {
-                        System.out.println("Login successful!");
+                        System.out.println(GREEN + "\n✅ Login successful!" + RESET);
                     } else {
-                        System.out.println("Invalid username or password.");
+                        System.out.println(RED + "\n❌ Invalid username or password." + RESET);
                     }
                     break;
 
                 case 2:
                     user.logout();
-                    System.out.println("You have been logged out.");
+                    System.out.println(GREEN + "\n✅ You have been logged out." + RESET);
                     break;
 
                 case 3:
-                    System.out.println("Logged in: " + user.isLoggedIn());
+                    System.out.println("\n🔍 Logged in: " + (user.isLoggedIn() ? GREEN + "Yes ✅" + RESET : RED + "No ❌" + RESET));
                     break;
 
                 case 4:
-                    System.out.println("Admin access: " + user.isAdmin());
+                    System.out.println("\n🔑 Admin access: " + (user.isAdmin() ? GREEN + "Yes 👑" + RESET : RED + "No 🔓" + RESET));
                     break;
 
                 case 5:
-                    System.out.println("Exiting...");
+                    System.out.println(GREEN + "\n🚪 Exiting... Goodbye!" + RESET);
                     scanner.close();
                     System.exit(0);
 
                 default:
-                    System.out.println("Invalid option. Please try again.");
+                    System.out.println(RED + "\n❌ Invalid option. Please try again." + RESET);
             }
+
+            Thread.sleep(1000); // Pause for better user experience
         }
+    }
+
+    // Simulate loading effect
+    private static void loadingEffect() throws InterruptedException {
+        for (int i = 0; i < 3; i++) {
+            System.out.print(".");
+            Thread.sleep(500);
+        }
+    }
+
+    // Method to print fancy headers
+    private static void printHeader(String title) {
+        String border = "==============================";
+        System.out.println("\n" + border);
+        System.out.println("   " + title);
+        System.out.println(border);
     }
 }
 
