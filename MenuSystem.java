@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 // Menu class to represent menu items
@@ -19,15 +20,33 @@ class Menu {
     }
 
     public void displayMenuItem() {
-        System.out.println("\n🍽️ Item ID: " + itemId);
-        System.out.println("📌 Name: " + name);
-        System.out.println("💲 Price: $" + price);
-        System.out.println("📦 Quantity: " + quantity);
-        System.out.println("📁 Category: " + category);
+        System.out.printf("│ %-5s │ %-25s │ $%-6.2f │ %-8d │\n", 
+                         itemId, name, price, quantity);
     }
 
     public void updateQuantity(int newQuantity) {
         this.quantity = newQuantity;
+    }
+
+    // Getters
+    public String getCategory() {
+        return category;
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 
     // Inventory functions
@@ -40,10 +59,38 @@ class Menu {
             System.out.println("\n⚠️ No menu items available.");
             return;
         }
-        System.out.println("\n📜 MENU LIST:");
+        
+        // Group items by category
+        HashMap<String, ArrayList<Menu>> categorizedItems = new HashMap<>();
         for (Menu item : menuList) {
-            item.displayMenuItem();
+            categorizedItems.computeIfAbsent(item.getCategory(), k -> new ArrayList<>()).add(item);
         }
+
+        System.out.println();
+        for (String category : categorizedItems.keySet()) {
+            printCategoryBox(category);
+            printItemHeader();
+            for (Menu item : categorizedItems.get(category)) {
+                item.displayMenuItem();
+            }
+            printItemFooter();
+        }
+    }
+
+    public static void printCategoryBox(String category) {
+        String border = "┌────────────────────────────────────────────────────────┐";
+        String middle = String.format("│ %-54s │", "  " + category.toUpperCase());
+        System.out.println(border + "\n" + middle + "\n" + border);
+    }
+
+    public static void printItemHeader() {
+        System.out.println("├───────┼───────────────────────────┼─────────┼──────────┤");
+        System.out.printf("│ %-5s │ %-25s │ %-7s │ %-8s │\n", "ID", "Name", "Price", "Quantity");
+        System.out.println("├───────┼───────────────────────────┼─────────┼──────────┤");
+    }
+
+    public static void printItemFooter() {
+        System.out.println("└───────┴───────────────────────────┴─────────┴──────────┘\n");
     }
 
     public static Menu searchItemById(String itemId) {
@@ -77,9 +124,13 @@ public class MenuSystem {
         Scanner scanner = new Scanner(System.in);
 
         // Sample menu items
-        Menu.addMenuItem(new Menu("1", "Burger", 5.99, 10, "Fast Food"));
-        Menu.addMenuItem(new Menu("2", "Pizza", 9.99, 5, "Fast Food"));
-        Menu.addMenuItem(new Menu("3", "Pasta", 7.49, 8, "Italian"));
+        Menu.addMenuItem(new Menu("A01", "Chocolate Muffin", 5.99,5, "Muffins"));
+        Menu.addMenuItem(new Menu("A02", "Vanilla Muffin", 5.99,5, "Muffins"));
+        Menu.addMenuItem(new Menu("B01", "Hokkaido Burnt Cheesecake", 9.99, 5, "Cakes"));
+        Menu.addMenuItem(new Menu("B02", "Chocolate Indulgence", 7.49, 5, "Cakes"));
+        Menu.addMenuItem(new Menu("C01", "Sourdough Bread", 5.99,5, "Bread"));
+        Menu.addMenuItem(new Menu("001", "Sausage Bun", 5.99,5, "Bread"));
+    
 
         while (true) {
             printHeader(" MENU SYSTEM ");
@@ -201,7 +252,11 @@ public class MenuSystem {
                     String searchId = scanner.nextLine();
                     Menu item = Menu.searchItemById(searchId);
                     if (item != null) {
+                        System.out.println();
+                        Menu.printCategoryBox(item.getCategory());
+                        Menu.printItemHeader();
                         item.displayMenuItem();
+                        Menu.printItemFooter();
                     } else {
                         System.out.println(RED + "❌ Item not found." + RESET);
                     }
