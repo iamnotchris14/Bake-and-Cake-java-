@@ -33,7 +33,7 @@ public class Menu {
     public double getPrice() { return price; }
     public int getQuantity() { return quantity; }
 
-    // Static methods
+    // Inventory functions
     public static void addMenuItem(Menu item) {
         menuList.add(item);
     }
@@ -58,6 +58,15 @@ public class Menu {
             }
             printItemFooter();
         }
+    }
+
+    public static boolean reduceStock(String itemId, int quantity) {
+        Menu item = searchItemById(itemId);
+        if (item != null && item.getQuantity() >= quantity) {
+            item.updateQuantity(item.getQuantity() - quantity);
+            return true;
+        }
+        return false;
     }
 
     public static void printCategoryBox(String category) {
