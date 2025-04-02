@@ -502,23 +502,34 @@ class Menu {
     }
 
     public static void printCategoryBox(String category) {
-        System.out.println("\n╔════════════════════════════════╗");
-        System.out.println("║          " + category.toUpperCase() + "          ║");
-        System.out.println("╚════════════════════════════════╝");
+        // Calculate the required box width based on the longest line (34 chars)
+        int boxWidth = 34;
+        String upperCategory = category.toUpperCase();
+        
+        // Center the category name with proper padding
+        int totalPadding = boxWidth - 2 - upperCategory.length();
+        int leftPadding = totalPadding / 2;
+        int rightPadding = totalPadding - leftPadding;
+        
+        System.out.println("\n╔" + "═".repeat(boxWidth - 2) + "╗");
+        System.out.println("║" + " ".repeat(leftPadding) + upperCategory + " ".repeat(rightPadding) + "║");
+        System.out.println("╚" + "═".repeat(boxWidth - 2) + "╝");
     }
-
+    
     public static void printItemHeader() {
-        System.out.println("┌──────────┬──────────────────────┬──────────┬──────────┐");
-        System.out.println("│   ID     │        Name          │  Price   │ Quantity │");
-        System.out.println("├──────────┼──────────────────────┼──────────┼──────────┤");
+        System.out.println("┌──────────┬──────────────────────┬───────────┬──────────┐");
+        System.out.printf("│ %-8s │ %-20s │ %-9s │ %-8s │%n", 
+            "ID", "Name", "Price", "Quantity");
+        System.out.println("├──────────┼──────────────────────┼───────────┼──────────┤");
     }
-
+    
     public static void printItemFooter() {
-        System.out.println("└──────────┴──────────────────────┴──────────┴──────────┘");
+        System.out.println("└──────────┴──────────────────────┴───────────┴──────────┘");
     }
-
+    
+    // In your Menu class's displayMenuItem() method:
     public void displayMenuItem() {
-        System.out.printf("│ %-8s │ %-20s │ $%-7.2f │ %-8d │\n", 
+        System.out.printf("│ %-8s │ %-20s │ $%-8.2f │ %-8d │%n",
             itemId, name, price, quantity);
     }
 
