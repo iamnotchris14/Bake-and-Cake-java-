@@ -8,6 +8,9 @@ public class BakerySystem {
     private static final String GREEN = "\u001B[32m";
     private static final String CYAN = "\u001B[36m";
     private static final String YELLOW = "\u001B[33m";
+    private static final String PURPLE = "\u001B[35m";
+    private static final String BLUE = "\u001B[34m";
+    
     private static Scanner scanner = new Scanner(System.in);
     private static List<Order> orders = new ArrayList<>();
 
@@ -19,11 +22,13 @@ public class BakerySystem {
     private static void initializeSampleData() {
         // Initialize sample menu items
         Menu.addMenuItem(new Menu("A01", "Chocolate Muffin", 5.99, 10, "Muffins"));
-        Menu.addMenuItem(new Menu("A02", "Vanilla Muffin", 5.99, 10, "Muffins"));
+        Menu.addMenuItem(new Menu("A02", "Blueberry Muffin", 5.99, 10, "Muffins"));
         Menu.addMenuItem(new Menu("B01", "Hokkaido Cheesecake", 9.99, 8, "Cakes"));
         Menu.addMenuItem(new Menu("B02", "Chocolate Indulgence", 7.49, 8, "Cakes"));
         Menu.addMenuItem(new Menu("C01", "Sourdough Bread", 5.99, 15, "Bread"));
         Menu.addMenuItem(new Menu("C02", "Sausage Bun", 5.99, 15, "Bread"));
+        Menu.addMenuItem(new Menu("D01", "Almond Croissant", 4.49, 12, "Pastries"));
+        Menu.addMenuItem(new Menu("D02", "Cinnamon Roll", 3.99, 12, "Pastries"));
     }
 
     private static void loginSystem() throws InterruptedException {
@@ -68,7 +73,8 @@ public class BakerySystem {
             System.out.println("3. Update Stock");
             System.out.println("4. View Menu");
             System.out.println("5. View All Orders");
-            System.out.println("6. Logout");
+            System.out.println("6. Generate Sales Report");
+            System.out.println("7. Logout");
             System.out.print(CYAN + "Choose an option: " + RESET);
 
             int choice = scanner.nextInt();
@@ -91,11 +97,49 @@ public class BakerySystem {
                     viewAllOrders();
                     break;
                 case 6:
+                    generateSalesReport();
+                    break;
+                case 7:
                     return;
                 default:
                     System.out.println(RED + "\n❌ Invalid option. Please try again." + RESET);
             }
         }
+    }
+    
+    public static void generateSalesReport() {
+        if (orders.isEmpty()) {
+            System.out.println(YELLOW + "\nℹ No orders have been placed yet." + RESET);
+            return;
+        }
+        
+        double totalRevenue = 0;
+        int totalItemsSold = 0;
+        
+        System.out.println("\n" + PURPLE + "════════════════ SALES REPORT ════════════════" + RESET);
+        System.out.printf("%-15s %-20s %-10s %-10s\n", "Order ID", "Customer", "Items", "Total");
+        System.out.println(PURPLE + "────────────────────────────────────────────────" + RESET);
+        
+        for (Order order : orders) {
+            int itemsInOrder = order.getOrderItems().stream().mapToInt(OrderItem::getQuantity).sum();
+            double orderTotal = order.getOrderItems().stream()
+                .mapToDouble(item -> item.getItem().getPrice() * item.getQuantity())
+                .sum();
+            
+            System.out.printf("%-15s %-20s %-10d $%-9.2f\n", 
+                order.getOrderId(), 
+                order.getCustomerName(), 
+                itemsInOrder, 
+                orderTotal);
+            
+            totalRevenue += orderTotal;
+            totalItemsSold += itemsInOrder;
+        }
+        
+        System.out.println(PURPLE + "────────────────────────────────────────────────" + RESET);
+        System.out.printf("%-15s %-20s %-10d $%-9.2f\n", 
+            "TOTAL", "", totalItemsSold, totalRevenue);
+        System.out.println(PURPLE + "════════════════════════════════════════════════" + RESET);
     }
 
     private static void customerView() throws InterruptedException {
@@ -278,15 +322,16 @@ public class BakerySystem {
             return;
         }
         
-        System.out.println("\n════════════════ ALL ORDERS ════════════════");
+        System.out.println("\n" + BLUE + "════════════════ ALL ORDERS ════════════════" + RESET);
         for (Order order : orders) {
             order.printOrder();
+            System.out.println(BLUE + "────────────────────────────────────────────" + RESET);
         }
     }
 
     private static void addMenuItem() {
         // Display current menu items first
-        System.out.println("\n════════════ CURRENT MENU ITEMS ════════════");
+        System.out.println("\n" + PURPLE + "════════════ CURRENT MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
         
         System.out.println("\n➕ ADD NEW MENU ITEM");
@@ -306,13 +351,13 @@ public class BakerySystem {
         System.out.println(GREEN + "✅ Item added successfully!" + RESET);
         
         // Display updated menu
-        System.out.println("\n════════════ UPDATED MENU ITEMS ════════════");
+        System.out.println("\n" + PURPLE + "════════════ UPDATED MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
     }
 
     private static void removeMenuItem() {
         // Display current menu items first
-        System.out.println("\n════════════ CURRENT MENU ITEMS ════════════");
+        System.out.println("\n" + PURPLE + "════════════ CURRENT MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
         
         System.out.println("\n❌ REMOVE MENU ITEM");
@@ -322,13 +367,13 @@ public class BakerySystem {
         Menu.removeMenuItem(removeId);
         
         // Display updated menu
-        System.out.println("\n════════════ UPDATED MENU ITEMS ════════════");
+        System.out.println("\n" + PURPLE + "════════════ UPDATED MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
     }
 
     private static void updateStock() {
         // Display current menu items first
-        System.out.println("\n════════════ CURRENT MENU ITEMS ════════════");
+        System.out.println("\n" + PURPLE + "════════════ CURRENT MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
         
         System.out.println("\n🔄 UPDATE STOCK");
@@ -344,7 +389,7 @@ public class BakerySystem {
             System.out.println(GREEN + "✅ Stock updated successfully!" + RESET);
             
             // Display updated item
-            System.out.println("\n════════════ UPDATED ITEM ════════════");
+            System.out.println("\n" + PURPLE + "════════════ UPDATED ITEM ════════════" + RESET);
             Menu.printItemHeader();
             item.displayMenuItem();
             Menu.printItemFooter();
@@ -408,7 +453,7 @@ public class BakerySystem {
     }
 
     private static void printHeader(String title) {
-        String border = "=================================";
+        String border = "=".repeat(40);
         System.out.println("\n" + border);
         System.out.println("   " + title);
         System.out.println(border);
@@ -482,7 +527,7 @@ class Menu {
         }
         return false;
     }
-
+    
     public static void displayAllItems() {
         if (menuItems.isEmpty()) {
             System.out.println("\u001B[33m" + "ℹ No items available in the menu." + "\u001B[0m");
@@ -502,23 +547,28 @@ class Menu {
     }
 
     public static void printCategoryBox(String category) {
-        System.out.println("\n╔════════════════════════════════╗");
-        System.out.println("║          " + category.toUpperCase() + "          ║");
-        System.out.println("╚════════════════════════════════╝");
+        String upperCategory = category.toUpperCase();
+        int boxWidth = 34;
+        int padding = (boxWidth - 2 - upperCategory.length()) / 2;
+        
+        System.out.println("\n╔" + "═".repeat(boxWidth - 2) + "╗");
+        System.out.println("║" + " ".repeat(padding) + upperCategory + " ".repeat(padding) + "║");
+        System.out.println("╚" + "═".repeat(boxWidth - 2) + "╝");
     }
-
+    
     public static void printItemHeader() {
-        System.out.println("┌──────────┬──────────────────────┬──────────┬──────────┐");
-        System.out.println("│   ID     │        Name          │  Price   │ Quantity │");
-        System.out.println("├──────────┼──────────────────────┼──────────┼──────────┤");
+        System.out.println("┌──────────┬──────────────────────┬───────────┬──────────┐");
+        System.out.printf("│ %-8s │ %-20s │ %-9s │ %-8s │%n", 
+            "ID", "Name", "Price", "Quantity");
+        System.out.println("├──────────┼──────────────────────┼───────────┼──────────┤");
     }
-
+    
     public static void printItemFooter() {
-        System.out.println("└──────────┴──────────────────────┴──────────┴──────────┘");
+        System.out.println("└──────────┴──────────────────────┴───────────┴──────────┘");
     }
-
+    
     public void displayMenuItem() {
-        System.out.printf("│ %-8s │ %-20s │ $%-7.2f │ %-8d │\n", 
+        System.out.printf("│ %-8s │ %-20s │ $%-8.2f │ %-8d │%n",
             itemId, name, price, quantity);
     }
 
@@ -561,7 +611,7 @@ class Order {
     }
 
     public void printOrder() {
-        System.out.println("\n════════════════ ORDER #" + orderId + " ════════════════");
+        System.out.println("\nOrder #" + orderId);
         System.out.println("Customer: " + customerName);
         System.out.println("Status: " + status);
         System.out.println("\nOrder Items:");
@@ -593,6 +643,8 @@ class Order {
 
     // Getters
     public List<OrderItem> getOrderItems() { return orderItems; }
+    public String getOrderId() { return orderId; }
+    public String getCustomerName() { return customerName; }
 }
 
 class OrderItem {
