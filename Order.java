@@ -8,6 +8,7 @@ public class Order {
     private List<OrderItem> orderItems;
     private double total;
     private static int orderCounter = 1;
+    
 
     public Order(String customerName) {
         this.id = "ORD-" + String.format("%04d", orderCounter++);

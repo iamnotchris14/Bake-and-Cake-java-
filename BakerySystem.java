@@ -20,7 +20,6 @@ public class BakerySystem {
     }
 
     private static void initializeSampleData() {
-        // Initialize sample menu items
         Menu.addMenuItem(new Menu("A01", "Chocolate Muffin", 5.99, 10, "Muffins"));
         Menu.addMenuItem(new Menu("A02", "Blueberry Muffin", 5.99, 10, "Muffins"));
         Menu.addMenuItem(new Menu("B01", "Hokkaido Cheesecake", 9.99, 8, "Cakes"));
@@ -122,12 +121,10 @@ public class BakerySystem {
         
         for (Order order : orders) {
             int itemsInOrder = order.getOrderItems().stream().mapToInt(OrderItem::getQuantity).sum();
-            double orderTotal = order.getOrderItems().stream()
-                .mapToDouble(item -> item.getItem().getPrice() * item.getQuantity())
-                .sum();
+            double orderTotal = order.getTotal();
             
             System.out.printf("%-15s %-20s %-10d $%-9.2f\n", 
-                order.getOrderId(), 
+                order.getId(), 
                 order.getCustomerName(), 
                 itemsInOrder, 
                 orderTotal);
@@ -300,7 +297,30 @@ public class BakerySystem {
             return false;
         }
         
-        // Verify stock and process order
+        double totalAmount = order.getTotal();
+        System.out.println(GREEN + "\nTotal Amount: $" + totalAmount + RESET);
+        
+        System.out.println("\nSelect Payment Method: ");
+        System.out.println("1. Cash");
+        System.out.println("2. Card");
+        System.out.print(CYAN + "Choose an option: " + RESET);
+        
+        int paymentChoice = scanner.nextInt();
+        scanner.nextLine();
+        
+        Payment payment;
+        switch (paymentChoice) {
+            case 1:
+                payment = new CashPayment();
+                break;
+            case 2:
+                payment = new CardPayment();
+                break;
+            default:
+                System.out.println(RED + "❌ Invalid payment method." + RESET);
+                return false;
+        }
+        
         for (OrderItem item : order.getOrderItems()) {
             if (!Menu.reduceStock(item.getItem().getItemId(), item.getQuantity())) {
                 System.out.println(RED + "❌ Error processing order. Not enough stock for: " + 
@@ -309,11 +329,16 @@ public class BakerySystem {
             }
         }
         
-        order.updateStatus("Completed");
-        orders.add(order);
-        System.out.println(GREEN + "\n✅ Order placed successfully!" + RESET);
-        order.printOrder();
-        return true;
+        if (payment.processPayment(totalAmount)) {
+            order.updateStatus("Completed");
+            orders.add(order);
+            System.out.println(GREEN + "\n✅ Order placed successfully!" + RESET);
+            order.printOrder();
+            return true;
+        }
+        
+        System.out.println(RED + "❌ Payment failed." + RESET);
+        return false;
     }
 
     private static void viewAllOrders() {
@@ -330,7 +355,6 @@ public class BakerySystem {
     }
 
     private static void addMenuItem() {
-        // Display current menu items first
         System.out.println("\n" + PURPLE + "════════════ CURRENT MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
         
@@ -350,13 +374,11 @@ public class BakerySystem {
         Menu.addMenuItem(new Menu(itemId, name, price, quantity, category));
         System.out.println(GREEN + "✅ Item added successfully!" + RESET);
         
-        // Display updated menu
         System.out.println("\n" + PURPLE + "════════════ UPDATED MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
     }
 
     private static void removeMenuItem() {
-        // Display current menu items first
         System.out.println("\n" + PURPLE + "════════════ CURRENT MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
         
@@ -366,13 +388,11 @@ public class BakerySystem {
         
         Menu.removeMenuItem(removeId);
         
-        // Display updated menu
         System.out.println("\n" + PURPLE + "════════════ UPDATED MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
     }
 
     private static void updateStock() {
-        // Display current menu items first
         System.out.println("\n" + PURPLE + "════════════ CURRENT MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
         
@@ -388,7 +408,6 @@ public class BakerySystem {
             item.updateQuantity(newQuantity);
             System.out.println(GREEN + "✅ Stock updated successfully!" + RESET);
             
-            // Display updated item
             System.out.println("\n" + PURPLE + "════════════ UPDATED ITEM ════════════" + RESET);
             Menu.printItemHeader();
             item.displayMenuItem();
@@ -459,6 +478,11 @@ public class BakerySystem {
         System.out.println(border);
     }
 }
+
+interface Payment {
+    boolean processPayment(double amount);
+}
+
 
 class Login {
     private String username;
@@ -576,87 +600,9 @@ class Menu {
         this.quantity = newQuantity;
     }
 
-    // Getters
     public String getItemId() { return itemId; }
     public String getName() { return name; }
     public double getPrice() { return price; }
     public int getQuantity() { return quantity; }
     public String getCategory() { return category; }
-}
-
-class Order {
-    private String orderId;
-    private String customerName;
-    private String status;
-    private List<OrderItem> orderItems;
-    private static int orderCounter = 1;
-
-    public Order(String customerName) {
-        this.orderId = "ORD" + String.format("%03d", orderCounter++);
-        this.customerName = customerName;
-        this.status = "Pending";
-        this.orderItems = new ArrayList<>();
-    }
-
-    public void addItems(List<OrderItem> items) {
-        orderItems.addAll(items);
-    }
-
-    public void removeItems(List<String> itemIds) {
-        orderItems.removeIf(item -> itemIds.contains(item.getItem().getItemId()));
-    }
-
-    public void updateStatus(String status) {
-        this.status = status;
-    }
-
-    public void printOrder() {
-        System.out.println("\nOrder #" + orderId);
-        System.out.println("Customer: " + customerName);
-        System.out.println("Status: " + status);
-        System.out.println("\nOrder Items:");
-        
-        if (orderItems.isEmpty()) {
-            System.out.println("\u001B[33m" + "ℹ No items in this order." + "\u001B[0m");
-            return;
-        }
-
-        System.out.println("┌──────────┬──────────────────────┬──────────┬──────────┬──────────┐");
-        System.out.println("│   ID     │        Name          │  Price   │ Quantity │ Subtotal │");
-        System.out.println("├──────────┼──────────────────────┼──────────┼──────────┼──────────┤");
-        
-        double total = 0;
-        for (OrderItem item : orderItems) {
-            double subtotal = item.getItem().getPrice() * item.getQuantity();
-            System.out.printf("│ %-8s │ %-20s │ $%-7.2f │ %-8d │ $%-7.2f │\n", 
-                item.getItem().getItemId(), 
-                item.getItem().getName(), 
-                item.getItem().getPrice(), 
-                item.getQuantity(), 
-                subtotal);
-            total += subtotal;
-        }
-        
-        System.out.println("└──────────┴──────────────────────┴──────────┴──────────┴──────────┘");
-        System.out.printf("\nTotal: $%.2f\n", total);
-    }
-
-    // Getters
-    public List<OrderItem> getOrderItems() { return orderItems; }
-    public String getOrderId() { return orderId; }
-    public String getCustomerName() { return customerName; }
-}
-
-class OrderItem {
-    private Menu item;
-    private int quantity;
-
-    public OrderItem(Menu item, int quantity) {
-        this.item = item;
-        this.quantity = quantity;
-    }
-
-    // Getters
-    public Menu getItem() { return item; }
-    public int getQuantity() { return quantity; }
 }
