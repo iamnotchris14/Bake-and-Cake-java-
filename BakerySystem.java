@@ -15,10 +15,10 @@ public class BakerySystem {
     private static List<Order> orders = new ArrayList<>();
 
     public static void main(String[] args) throws InterruptedException {
-        initializeSampleData();
-        loginSystem();
+        initializeSampleData(); //Uses menu class to add sample items for viewing
+        loginSystem(); //Starts the login process
     }
-
+    // Creating objects (instances) of the Menu class
     private static void initializeSampleData() {
         Menu.addMenuItem(new Menu("A01", "Chocolate Muffin", 5.99, 10, "Muffins"));
         Menu.addMenuItem(new Menu("A02", "Blueberry Muffin", 5.99, 10, "Muffins"));
@@ -45,12 +45,12 @@ public class BakerySystem {
             scanner.nextLine();
 
             switch (choice) {
-                case 1:
+                case 1: //Uses login class for admin authentication
                     if (handleLogin(admin, "Admin")) {
                         adminPanel();
                     }
                     break;
-                case 2:
+                case 2: //Uses login class for customer authentication
                     if (handleLogin(customer, "Customer")) {
                         customerView();
                     }
@@ -81,19 +81,19 @@ public class BakerySystem {
 
             switch (choice) {
                 case 1:
-                    addMenuItem();
+                    addMenuItem(); //Uses the menu class to add items
                     break;
                 case 2:
-                    removeMenuItem();
+                    removeMenuItem(); //Uses the menu class to remove items 
                     break;
                 case 3:
-                    updateStock();
+                    updateStock(); //Uses the menu class to update the stocks
                     break;
                 case 4:
-                    Menu.displayAllItems();
+                    Menu.displayAllItems(); //Uses the menu class to display all items
                     break;
                 case 5:
-                    viewAllOrders();
+                    viewAllOrders(); 
                     break;
                 case 6:
                     generateSalesReport();
@@ -153,15 +153,15 @@ public class BakerySystem {
 
             switch (choice) {
                 case 1:
-                    Menu.displayAllItems();
+                    Menu.displayAllItems(); // Uses Menu class to display items
                     break;
                 case 2:
-                    searchItem();
+                    searchItem(); // Uses Menu class to search items
                     break;
                 case 3:
                     System.out.print("Enter your name: ");
                     String customerName = scanner.nextLine();
-                    createOrder(customerName);
+                    createOrder(customerName); // Uses Menu class for order creation
                     break;
                 case 4:
                     return;
@@ -188,16 +188,17 @@ public class BakerySystem {
 
             switch (choice) {
                 case 1:
-                    addItemsToOrder(order);
+                    addItemsToOrder(order); // Uses Menu class to add items to order
+
                     break;
                 case 2:
-                    removeItemsFromOrder(order);
+                    removeItemsFromOrder(order); //Uses Menu class to remove items to order
                     break;
                 case 3:
                     order.printOrder();
                     break;
                 case 4:
-                    if (checkoutOrder(order)) return;
+                    if (checkoutOrder(order)) return; //Uses Menu class to reduce stock
                     break;
                 case 5:
                     System.out.println(RED + "❌ Order cancelled." + RESET);
@@ -212,7 +213,7 @@ public class BakerySystem {
         List<OrderItem> itemsToAdd = new ArrayList<>();
         
         while (true) {
-            Menu.displayAllItems();
+            Menu.displayAllItems(); // Uses Menu class to display items
             System.out.println(YELLOW + "\nCurrent items in batch: " + itemsToAdd.size() + RESET);
             System.out.print("Enter Item ID to add (or 'done' to finish): ");
             String itemId = scanner.nextLine();
@@ -375,36 +376,38 @@ public class BakerySystem {
         System.out.println(GREEN + "✅ Item added successfully!" + RESET);
         
         System.out.println("\n" + PURPLE + "════════════ UPDATED MENU ITEMS ════════════" + RESET);
-        Menu.displayAllItems();
+        Menu.displayAllItems();  // Uses Menu class to display updated items
     }
 
     private static void removeMenuItem() {
         System.out.println("\n" + PURPLE + "════════════ CURRENT MENU ITEMS ════════════" + RESET);
-        Menu.displayAllItems();
+        Menu.displayAllItems(); //Uses Menu class to display items
         
         System.out.println("\n❌ REMOVE MENU ITEM");
         System.out.print("Enter Item ID to Remove: ");
         String removeId = scanner.nextLine();
-        
+        // Using Menu class to remove item
         Menu.removeMenuItem(removeId);
         
         System.out.println("\n" + PURPLE + "════════════ UPDATED MENU ITEMS ════════════" + RESET);
-        Menu.displayAllItems();
+        Menu.displayAllItems(); // Uses Menu class to display updated items
     }
 
     private static void updateStock() {
         System.out.println("\n" + PURPLE + "════════════ CURRENT MENU ITEMS ════════════" + RESET);
-        Menu.displayAllItems();
+        Menu.displayAllItems(); // Uses Menu class to display items
         
         System.out.println("\n🔄 UPDATE STOCK");
         System.out.print("Enter Item ID to Update: ");
         String updateId = scanner.nextLine();
+        // Using Menu class to search for item
         Menu item = Menu.searchItemById(updateId);
         if (item != null) {
             System.out.println("\nCurrent stock for " + item.getName() + ": " + item.getQuantity());
             System.out.print("Enter New Quantity: ");
             int newQuantity = scanner.nextInt();
             scanner.nextLine();
+            // Using Menu class to update quantity
             item.updateQuantity(newQuantity);
             System.out.println(GREEN + "✅ Stock updated successfully!" + RESET);
             
@@ -420,6 +423,7 @@ public class BakerySystem {
     private static void searchItem() {
         System.out.print("🔎 Enter Item ID to Search: ");
         String searchId = scanner.nextLine();
+        // Using Menu class to search for item
         Menu item = Menu.searchItemById(searchId);
         if (item != null) {
             System.out.println();
@@ -440,7 +444,7 @@ public class BakerySystem {
 
         System.out.print("🔄 Logging in");
         loadingEffect();
-
+        // Using Login class to authenticate user
         if (user.authenticate(username, password)) {
             System.out.println(GREEN + "\n✅ " + userType + " login successful!" + RESET);
             Thread.sleep(1000);

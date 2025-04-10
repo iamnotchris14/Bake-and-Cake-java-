@@ -1,8 +1,9 @@
 public class Login {
+    // Private fields (encapsulated)
     private String username;
     private String password;
     private boolean isAdmin;
-
+    // Constructor & methods to control access
     public Login(String username, String password, boolean isAdmin) {
         this.username = username;
         this.password = password;

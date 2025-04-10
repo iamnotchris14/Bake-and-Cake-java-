@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Menu {
+    
     private String itemId;
     private String name;
     private double price;
@@ -16,7 +17,7 @@ public class Menu {
         this.quantity = quantity;
         this.category = category;
     }
-
+    // Polymorphic method (can be overridden)
     public void displayMenuItem() {
         System.out.printf("│ %-5s │ %-25s │ $%-6.2f │ %-8d │\n", 
                          itemId, name, price, quantity);
@@ -37,7 +38,7 @@ public class Menu {
     public static void addMenuItem(Menu item) {
         menuList.add(item);
     }
-
+    // Static method working with all Menu items
     public static void displayAllItems() {
         if (menuList.isEmpty()) {
             System.out.println("\n⚠️ No menu items available.");
