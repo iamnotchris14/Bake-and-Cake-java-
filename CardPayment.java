@@ -17,7 +17,7 @@ public class CardPayment implements Payment {
         
         return true;
     }
-    
+    //Scanner cannot be closed because it will affect the usage in other classes. (Ignore Error)
     @Override
     public boolean processPayment(double amount) {
         Scanner scanner = new Scanner(System.in);
