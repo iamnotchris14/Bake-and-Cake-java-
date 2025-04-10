@@ -293,11 +293,15 @@ public class BakerySystem {
     }
 
     private static boolean checkoutOrder(Order order) {
+        // checks if there is items. If it's empty, 
+        // it will show and stop the process
         if (order.getOrderItems().isEmpty()) {
             System.out.println(RED + "❌ Cannot checkout empty order." + RESET);
             return false;
         }
         
+        // calculate and display 
+        // the total price for the order
         double totalAmount = order.getTotal();
         System.out.println(GREEN + "\nTotal Amount: $" + totalAmount + RESET);
         
@@ -306,10 +310,12 @@ public class BakerySystem {
         System.out.println("2. Card");
         System.out.print(CYAN + "Choose an option: " + RESET);
         
+        // Prompt for payment method
         int paymentChoice = scanner.nextInt();
         scanner.nextLine();
         
         Payment payment;
+        // Payment method selection
         switch (paymentChoice) {
             case 1:
                 payment = new CashPayment();
@@ -322,6 +328,7 @@ public class BakerySystem {
                 return false;
         }
         
+        // Stock validation
         for (OrderItem item : order.getOrderItems()) {
             if (!Menu.reduceStock(item.getItem().getItemId(), item.getQuantity())) {
                 System.out.println(RED + "❌ Error processing order. Not enough stock for: " + 
@@ -330,6 +337,7 @@ public class BakerySystem {
             }
         }
         
+        // Process payment
         if (payment.processPayment(totalAmount)) {
             order.updateStatus("Completed");
             orders.add(order);
@@ -337,7 +345,7 @@ public class BakerySystem {
             order.printOrder();
             return true;
         }
-        
+        // If payment didn't go throught, it shows a failure message
         System.out.println(RED + "❌ Payment failed." + RESET);
         return false;
     }
