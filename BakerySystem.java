@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BakerySystem {
+    //colors initialised for the decoration border
     private static final String RESET = "\u001B[0m";
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\u001B[32m";
@@ -12,14 +13,14 @@ public class BakerySystem {
     private static final String BLUE = "\u001B[34m";
     
     private static Scanner scanner = new Scanner(System.in);
-    private static List<Order> orders = new ArrayList<>();
+    private static List<Order> orders = new ArrayList<>(); //using arraylist to store menu items and to be incorporated with the order class to place orders.
 
     public static void main(String[] args) throws InterruptedException {
-        initializeSampleData(); //Uses menu class to add sample items for viewing
+        menuItems(); //Uses menu class to add sample items for viewing
         loginSystem(); //Starts the login process
     }
-    //Menu
-    private static void initializeSampleData() {
+    //Menu items
+    private static void menuItems() {
         Menu.addMenuItem(new Menu("A01", "Chocolate Muffin", 5.99, 10, "Muffins"));
         Menu.addMenuItem(new Menu("A02", "Blueberry Muffin", 5.99, 10, "Muffins"));
         Menu.addMenuItem(new Menu("B01", "Hokkaido Cheesecake", 9.99, 8, "Cakes"));
@@ -29,7 +30,7 @@ public class BakerySystem {
         Menu.addMenuItem(new Menu("D01", "Almond Croissant", 4.49, 12, "Pastries"));
         Menu.addMenuItem(new Menu("D02", "Cinnamon Roll", 3.99, 12, "Pastries"));
     }
-    //login
+    //login panel
     private static void loginSystem() throws InterruptedException {
         Login admin = new Login("admin", "admin123", true);
         Login customer = new Login("customer", "customer123", false);
@@ -63,7 +64,7 @@ public class BakerySystem {
             Thread.sleep(1000);
         }
     }
-
+    //admin panel
     private static void adminPanel() throws InterruptedException {
         while (true) {
             printHeader(" ADMIN PANEL ");
@@ -362,7 +363,7 @@ public class BakerySystem {
             System.out.println(BLUE + "────────────────────────────────────────────" + RESET);
         }
     }
-
+    //adding a menu item
     private static void addMenuItem() {
         System.out.println("\n" + PURPLE + "════════════ CURRENT MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();
@@ -386,7 +387,7 @@ public class BakerySystem {
         System.out.println("\n" + PURPLE + "════════════ UPDATED MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems();  // Uses Menu class to display updated items
     }
-
+    //removing a menu item
     private static void removeMenuItem() {
         System.out.println("\n" + PURPLE + "════════════ CURRENT MENU ITEMS ════════════" + RESET);
         Menu.displayAllItems(); //Uses Menu class to display items
@@ -427,7 +428,7 @@ public class BakerySystem {
             System.out.println(RED + "❌ Item not found." + RESET);
         }
     }
-
+    //search item by the ID
     private static void searchItem() {
         System.out.print("🔎 Enter Item ID to Search: ");
         String searchId = scanner.nextLine();
@@ -443,7 +444,7 @@ public class BakerySystem {
             System.out.println(RED + "❌ Item not found." + RESET);
         }
     }
-
+    //handles the authentication for admin and customer
     private static boolean handleLogin(Login user, String userType) throws InterruptedException {
         System.out.print("\n🔑 Enter username: ");
         String username = scanner.nextLine();
@@ -463,7 +464,7 @@ public class BakerySystem {
             return false;
         }
     }
-
+    //exits the system
     private static void exitSystem() {
         System.out.print(GREEN + "\n🚪 Exiting");
         try {
@@ -475,7 +476,7 @@ public class BakerySystem {
         scanner.close();
         System.exit(0);
     }
-
+    // pause function for (.) to have animation effect
     private static void loadingEffect() throws InterruptedException {
         for (int i = 0; i < 3; i++) {
             System.out.print(".");
