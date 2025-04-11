@@ -33,8 +33,8 @@ public class CardPayment implements Payment {
             return false;
         }
         
-        System.out.println("Card details verified. Processing payment of RM" + amount + "...");
-        System.out.println("Card payment of RM" + amount + " received.");
+        System.out.println("Card details verified. Processing payment of $" + amount + "...");
+        System.out.println("Card payment of $" + amount + " received.");
         return true;
     }
 }
