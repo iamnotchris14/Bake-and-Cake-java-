@@ -3,13 +3,13 @@ import java.util.HashMap;
 
 public class Menu {
     
-    private String itemId;
+    private String itemId; //encapsulated fields
     private String name;
     private double price;
     private int quantity;
     private String category;
     private static ArrayList<Menu> menuList = new ArrayList<>();
-
+    //constructors
     public Menu(String itemId, String name, double price, int quantity, String category) {
         this.itemId = itemId;
         this.name = name;
@@ -17,7 +17,8 @@ public class Menu {
         this.quantity = quantity;
         this.category = category;
     }
-    // Polymorphic method (can be overridden)
+    
+    // Used polymorphism here so later when integrated into bakerysystem the methods will be overriden 
     public void displayMenuItem() {
         System.out.printf("│ %-5s │ %-25s │ $%-6.2f │ %-8d │\n", 
                          itemId, name, price, quantity);
@@ -27,6 +28,7 @@ public class Menu {
         this.quantity = newQuantity;
     }
 
+    
     // Getters
     public String getCategory() { return category; }
     public String getItemId() { return itemId; }

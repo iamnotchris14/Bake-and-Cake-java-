@@ -18,7 +18,7 @@ public class BakerySystem {
         initializeSampleData(); //Uses menu class to add sample items for viewing
         loginSystem(); //Starts the login process
     }
-    // Creating objects (instances) of the Menu class
+    //Menu
     private static void initializeSampleData() {
         Menu.addMenuItem(new Menu("A01", "Chocolate Muffin", 5.99, 10, "Muffins"));
         Menu.addMenuItem(new Menu("A02", "Blueberry Muffin", 5.99, 10, "Muffins"));
@@ -29,13 +29,13 @@ public class BakerySystem {
         Menu.addMenuItem(new Menu("D01", "Almond Croissant", 4.49, 12, "Pastries"));
         Menu.addMenuItem(new Menu("D02", "Cinnamon Roll", 3.99, 12, "Pastries"));
     }
-
+    //login
     private static void loginSystem() throws InterruptedException {
         Login admin = new Login("admin", "admin123", true);
         Login customer = new Login("customer", "customer123", false);
 
         while (true) {
-            printHeader(" BAKERY MANAGEMENT SYSTEM ");
+            printHeader(" BAKE AND CAKE ");
             System.out.println("1. Admin Login");
             System.out.println("2. Customer Login");
             System.out.println("3. Exit");
@@ -67,7 +67,7 @@ public class BakerySystem {
     private static void adminPanel() throws InterruptedException {
         while (true) {
             printHeader(" ADMIN PANEL ");
-            System.out.println("1. Add Menu Item");
+            System.out.println("1. Create Menu Item");
             System.out.println("2. Remove Menu Item");
             System.out.println("3. Update Stock");
             System.out.println("4. View Menu");
@@ -81,7 +81,7 @@ public class BakerySystem {
 
             switch (choice) {
                 case 1:
-                    addMenuItem(); //Uses the menu class to add items
+                    addMenuItem(); //Uses the menu class to create items
                     break;
                 case 2:
                     removeMenuItem(); //Uses the menu class to remove items 
